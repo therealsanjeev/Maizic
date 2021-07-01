@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+
+        android:title="My Device"
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_round_home_24"/>
+
+    <item android:title="Playback"
+        android:id="@+id/bottomNavigationClockMenuId"
+        android:icon="@drawable/ic_baseline_ondemand_video_24"/>
+
+    <item android:title="GrouSale"
+        android:id="@+id/bottomNavigationTimerMenuId"
+        android:icon="@drawable/ic_baseline_local_mall_24"/>
+
+    <item android:title="More"
+        android:id="@+id/bottomNavigationStopWatchMenuId"
+        android:icon="@drawable/ic_grid_view_white_24dp"/>
+
+</menu>
