@@ -10,4 +10,19 @@
         android:name="com.maizic.maizic.fragments.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/recorderFragment"
+        android:name="com.maizic.maizic.fragments.PlaybackFragment"
+        android:label="fragment_recorder"
+        tools:layout="@layout/fragment_recorder" />
+    <fragment
+        android:id="@+id/grousaleFragment"
+        android:name="com.maizic.maizic.fragments.GrouSaleFragment"
+        android:label="fragment_grou_sale"
+        tools:layout="@layout/fragment_grou_sale" />
+    <fragment
+        android:id="@+id/moreFragment"
+        android:name="com.maizic.maizic.fragments.MoreFragment"
+        android:label="fragment_more"
+        tools:layout="@layout/fragment_more" />
 </navigation>

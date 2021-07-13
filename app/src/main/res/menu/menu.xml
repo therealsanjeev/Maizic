@@ -5,18 +5,18 @@
 
         android:title="My Device"
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_round_home_24"/>
+        android:icon="@drawable/ic_duo_black_24dp"/>
 
     <item android:title="Playback"
-        android:id="@+id/bottomNavigationClockMenuId"
-        android:icon="@drawable/ic_baseline_ondemand_video_24"/>
+        android:id="@+id/playbackFragment"
+        android:icon="@drawable/ic_smart_display_black_24dp"/>
 
     <item android:title="GrouSale"
-        android:id="@+id/bottomNavigationTimerMenuId"
+        android:id="@+id/grousaleFragment"
         android:icon="@drawable/ic_baseline_local_mall_24"/>
 
     <item android:title="More"
-        android:id="@+id/bottomNavigationStopWatchMenuId"
+        android:id="@+id/moreFragment"
         android:icon="@drawable/ic_grid_view_white_24dp"/>
 
 </menu>
