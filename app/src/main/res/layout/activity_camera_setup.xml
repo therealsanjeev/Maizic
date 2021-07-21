@@ -16,6 +16,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:src="@drawable/ic_round_arrow_back_ios_24"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
         <TextView
             android:drawableTint="@color/primaryColor"
             android:drawableRight="@drawable/ic_duo_black_24dp"
@@ -24,7 +28,7 @@
             android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Setup your Camera"
+            android:text="Setup your Camera  "
             android:layout_gravity="center"
             android:id="@+id/toolbar_title" />
     </com.google.android.material.appbar.MaterialToolbar>
@@ -48,7 +52,6 @@
             android:textSize="16sp" />
 
         <EditText
-            android:shadowColor="@color/black"
             android:inputType="number"
             android:id="@+id/et_device_id"
             android:layout_width="match_parent"

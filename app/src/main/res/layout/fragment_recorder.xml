@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgcolor"
-    tools:context=".fragments.GrouSaleFragment">
+    tools:context=".fragments.MaizicFragment">
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,12 +21,14 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:drawableTint="@color/primaryColor"
+                android:drawableRight="@drawable/ic_smart_display_black_24dp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/roboto_medium"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Playback"
+                android:text="Playback  "
                 android:layout_gravity="center"
                 android:id="@+id/toolbar_title" />
         </com.google.android.material.appbar.MaterialToolbar>

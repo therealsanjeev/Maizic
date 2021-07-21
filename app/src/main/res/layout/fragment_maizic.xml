@@ -5,45 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgcolor"
-    tools:context=".fragments.GrouSaleFragment">
+    tools:context=".fragments.MaizicFragment">
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:background="@color/white"
+            android:id="@+id/materialToolbar"
             android:layout_width="match_parent"
-            android:elevation="4dp"
             android:layout_height="?actionBarSize"
+            android:background="@color/white"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:textColor="@color/black"
-                android:fontFamily="@font/roboto_medium"
-                android:textSize="20sp"
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GrouSale"
                 android:layout_gravity="center"
-                android:id="@+id/toolbar_title" />
+                android:drawableRight="@drawable/ic_baseline_local_mall_24"
+                android:drawableTint="@color/primaryColor"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Maizic.com  "
+                android:textColor="@color/black"
+                android:textSize="20sp" />
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="GrouSales\nUnderconstruction"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintTop_toBottomOf="@+id/materialToolbar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

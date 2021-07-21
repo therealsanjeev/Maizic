@@ -138,7 +138,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     boolean bHasUpdate = false;
     boolean bNewDevFound = false;
 
-    static final int DEVICE_IS_EXISTANCE = 10004; // 设备已存在，添加失败
+    static final int DEVICE_IS_EXISTANCE = 10004; // Device already exists, adding failed
 
     private LinearLayout llWifiQuikConfig;
 
@@ -146,12 +146,12 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        // add 2016年8月25日 设置屏幕常亮，避免Smartlink的时候息屏
+        // add August 25, 2016 Set the screen to be always on to avoid the screen when Smartlink
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);// 隐藏标题 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);// Hide title 
         setContentView(R.layout.activity_smartlink_wifi_config);
-        initView(); // 初始化界面控件
+        initView(); // Initialize interface controls
 
     }
 
@@ -160,8 +160,8 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         // TODO Auto-generated method stub
         super.onStart();
 
-        initWifi(); // 初始化wifi 参数 并开启wifi广播
-        wifiChooseWindow(); // 初始化现实wifi列表的Dialog
+        initWifi(); // Initialize wifi parameters and enable wifi broadcast
+        wifiChooseWindow(); // Initialize the Dialog of the real WiFi list
     }
 
 
@@ -172,11 +172,11 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         }
         try {
             if (soundPlayerHint != null) {
-                soundPlayerHint.stop(); // 关闭提示音
+                soundPlayerHint.stop(); // Turn off the beep
             }
 
             if (soundPlayer != null) {
-                soundPlayer.stop(); // 关闭声音
+                soundPlayer.stop(); // Turn off the sound
             }
         } catch (Exception e) {
 
@@ -232,7 +232,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         // lin
         // 20160123
         boolean isZh = LocalDefines.isZh(this);
-        //llWifiQuikConfig.setVisibility(isZh ? View.VISIBLE : View.GONE);
+        llWifiQuikConfig.setVisibility(isZh ? View.VISIBLE : View.GONE);
         btnWifiQuikConfig.setOnClickListener(this);
 
         etSLWifiSSID = (EditText) findViewById(R.id.etSLWifiSSID);
@@ -264,7 +264,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
         lLayoutWifiInputPage.setVisibility(View.VISIBLE);
         etSLWifiPassword
-                .setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD); // 默认显示密码
+                .setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD); // Show password by default
 
         llayoutSLSearchingPage = (LinearLayout) findViewById(R.id.llayoutSLSearchingPage);
         flayoutSLSearchingAnimate = (FrameLayout) findViewById(R.id.flayoutSLSearchingAnimate);
@@ -280,7 +280,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         tvTimeLeft = (TextView) findViewById(R.id.tvTimeLeft);
     }
 
-    // 信息提示框
+    // Information box
     public void ShowAlert(String title, String msg) {
 
         if (hasWindowFocus()) {
@@ -302,16 +302,16 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 初始化wifi
+     * Initialize wifi
      */
     private void initWifi() {
         mWiFiAdnim = new WiFiAdnim(this);
         mWiFiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mWifiInfo = mWiFiManager.getConnectionInfo();
 
-        // 如果手机有连接wifi 则
+        // If the phone is connected to wifi then
         if (mWiFiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED
-                && mWifiInfo != null) { // 如果wifi是打开状态
+                && mWifiInfo != null) { // If wifi is on
             strConnSSID = mWifiInfo.getSSID();
             // System.out.println("GetSSID= "+strConnSSID+", "+strConnSSID.equalsIgnoreCase("0x"));//
 
@@ -325,7 +325,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                         && strConnSSID.substring(strConnSSID.length() - 1,
                         strConnSSID.length()).equals("\"")) {
                     strConnSSID = strConnSSID.substring(1,
-                            (strConnSSID.length() - 1)); // 得到当前连接的用户铭，去掉前后双引号
+                            (strConnSSID.length() - 1)); // Get the name of the currently connected user, remove the double quotation marks
                 }
 
                 etSLWifiSSID.setText(strConnSSID);
@@ -369,7 +369,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                                 progressDialog.setCanceledOnTouchOutside(false);
                                 progressDialog
                                         .setMessage(getString(R.string.wifi_start));
-                                progressDialog.show(); // 显示进度条
+                                progressDialog.show(); // Show progress bar
 
                             }
                         });
@@ -436,7 +436,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 显示wifi列表
+     * Show wifi list
      */
     private void onSoundWaveConfigListViewDialogShow() {
 
@@ -465,7 +465,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 判断当前语言
+     * Determine the current language
      *
      * @return
      */
@@ -480,7 +480,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         return bisLanguage;
     }
 
-    // 列表
+    // List
     public class DeviceSoundWaveConfigAdapter extends BaseAdapter {
 
         private class ItemViewHolder {
@@ -545,7 +545,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 用于判断当前搜索是否超时
+     * Used to determine whether the current search has timed out
      *
      * @author Administrator
      */

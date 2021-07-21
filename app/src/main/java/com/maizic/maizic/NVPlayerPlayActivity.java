@@ -647,7 +647,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
         if (mNVPanoPlayer == null) {
             mNVPanoPlayer = new NVPanoPlayer(this, false);
 
-            GLFisheyeView fisheyeView = new GLFisheyeView(getApplication());
+            GLFisheyeView fisheyeView = new GLFisheyeView(getApplicationContext());
             fisheyeView.setMode(NVPanoPlayer.PANO_PLAY_MODE_13);
             fisheyeView.setOnTouchListener(this);
             mNVPanoPlayer.setGlFishView(fisheyeView);
@@ -972,7 +972,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 保持屏幕常亮
+        // Keep the screen always on
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         NotificationManager notiManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notiManager.cancel(LocalDefines.notificationID);
@@ -981,7 +981,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
         SelectAreaList = new ArrayList<Integer>();
         Bundle data = this.getIntent().getExtras();
         if (data != null) {
-            // 得到上级传过来的参数
+            // Get the parameters passed by the superior
 
             deviceParam = data.getParcelable("device_param");
             isSelectArea = data.getBoolean("isSelectArea");
@@ -1007,17 +1007,17 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
         textureView = (TextureView) findViewById(R.id.texture_view);
 
         registerReceiver(this);
-        // 创建新的图片
+        // Create new picture
         DisplayMetrics dm = getResources().getDisplayMetrics();
         final float scale = getResources().getDisplayMetrics().density;
-        mScreenWidth = dm.widthPixels;// 屏幕宽
-        mScreenHeight = dm.heightPixels;// 屏幕高
-        LocalDefines.loadResource(getResources());// 加载图片资源
+        mScreenWidth = dm.widthPixels;// Screen width
+        mScreenHeight = dm.heightPixels;// Screen height
+        LocalDefines.loadResource(getResources());// Load image resources
 
         FLING_MAX_DISTANCE = (int) (mScreenWidth / 3);
 
         // add by xie 2016 6 6
-        // 预览下面的layout
+        // Preview the layout below
         rlvideoSetting = (LinearLayout) findViewById(R.id.rlvideoSetting);
         rlvideoSetting.getBackground().setAlpha(95);
 
@@ -1134,7 +1134,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
 
         for (int i = 0; i < LocalDefines.alarmcolumns * LocalDefines.alarmrows; i++) {
             Viewlist.add("");
-            // 报警区域默认为1选中
+            // The alarm area is 1 selected by default
             ALL_area_alarmlist.add(i, 1);
 
         }
@@ -1145,17 +1145,17 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
         // ///////////////////////////////////////////////
         InitGLContainers();
         InitGLViewProgressbar();
-        // 创建OpenGl表面，并设置渲染模式为请求渲染
+        // Create an OpenGl surface and set the rendering mode to request rendering
         InitGLViewPlayer();
-        // 添加 OpenGL ES2.0表面到容器
+        // Add OpenGL ES2.0 surface to the container
         ConnectGLViewToPlayer();
         // CreateHandler();
         SetGLViewPlayerMessageHandler();
 
 
         InitGLViewCloseButton();
-        InitGLViewTouchEventEX(); // 按钮点击事件，暂时不添加
-        // 设置环境变量
+        InitGLViewTouchEventEX(); // Button click event, don’t add it temporarily
+        // Set environment variables
         LibContext.SetContext(mNVPanoPlayer, null, null, null);
 
         Player.SelectWindow(Player.WND_ID_0);
@@ -1212,7 +1212,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
             mBtnImageQl2.setVisibility(View.GONE); // add by mai 2015-3-25
         }
 
-        if (mStreamType == 0) {// 当前是高清还标清
+        if (mStreamType == 0) {// Currently HD or SD
             btnSmooth.setTextColor(this.getResources().getColor(R.color.font_color_blue));
             btnHD.setTextColor(Color.WHITE);
 
@@ -1220,7 +1220,7 @@ public class NVPlayerPlayActivity extends Activity implements OnClickListener, O
             btnSmooth.setTextColor(Color.WHITE);
             btnHD.setTextColor(this.getResources().getColor(R.color.font_color_blue));
         }
-        readSystemParam(); // 获取上传存放的
+        readSystemParam(); // Get uploaded and stored
         onSoundChange(); // 开启或关闭声音
 
 

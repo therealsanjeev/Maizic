@@ -7,15 +7,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.maizic.maizic.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link GrouSaleFragment#newInstance} factory method to
+ * Use the {@link MaizicFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GrouSaleFragment extends Fragment {
+public class MaizicFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +29,7 @@ public class GrouSaleFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public GrouSaleFragment() {
+    public MaizicFragment() {
         // Required empty public constructor
     }
 
@@ -39,8 +42,8 @@ public class GrouSaleFragment extends Fragment {
      * @return A new instance of fragment GrouSaleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GrouSaleFragment newInstance(String param1, String param2) {
-        GrouSaleFragment fragment = new GrouSaleFragment();
+    public static MaizicFragment newInstance(String param1, String param2) {
+        MaizicFragment fragment = new MaizicFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -48,6 +51,13 @@ public class GrouSaleFragment extends Fragment {
         return fragment;
     }
 
+    WebView wb;
+    private class HelloWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return false;
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +66,22 @@ public class GrouSaleFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
+    private WebView webview;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_grou_sale, container, false);
+
+
+        View view=inflater.inflate(R.layout.fragment_maizic, container, false);
+        wb=view.findViewById(R.id.webview);
+        wb.getSettings().setJavaScriptEnabled(true);
+        wb.getSettings().setLoadWithOverviewMode(true);
+        wb.getSettings().setUseWideViewPort(true);
+        wb.getSettings().setBuiltInZoomControls(true);
+        wb.getSettings().setPluginState(WebSettings.PluginState.ON);
+        wb.setWebViewClient(new HelloWebViewClient());
+        wb.loadUrl("https://maizic.com/");
+        return view;
     }
 }

@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_home, container, false);
 
         view.findViewById(R.id.addCamera).setOnClickListener(v -> startActivity(new Intent(requireContext(), CameraSetupActivity.class)));
+        view.findViewById(R.id.add_camera_frame).setOnClickListener(v -> startActivity(new Intent(requireContext(), CameraSetupActivity.class)));
 
         return view;
     }
