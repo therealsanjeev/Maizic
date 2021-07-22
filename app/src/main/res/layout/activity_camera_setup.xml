@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bgcolor"
     android:orientation="vertical">
 
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:elevation="4dp"
         android:layout_height="?actionBarSize"
+        android:background="@color/white"
+        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:src="@drawable/ic_round_arrow_back_ios_24"
-            android:layout_width="32dp"
-            android:layout_height="32dp"/>
+            android:id="@+id/btnBackToHome"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_round_arrow_back_ios_24" />
+
         <TextView
-            android:drawableTint="@color/primaryColor"
-            android:drawableRight="@drawable/ic_duo_black_24dp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto_medium"
-            android:textSize="24sp"
+            android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Setup your Camera  "
             android:layout_gravity="center"
-            android:id="@+id/toolbar_title" />
+            android:drawableRight="@drawable/ic_duo_black_24dp"
+            android:drawableTint="@color/primaryColor"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Setup your Camera  "
+            android:textColor="@color/black"
+            android:textSize="24sp" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <LinearLayout
@@ -39,7 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
 
 
         <TextView
@@ -52,13 +53,13 @@
             android:textSize="16sp" />
 
         <EditText
-            android:inputType="number"
             android:id="@+id/et_device_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:hint="Enter Device ID" />
+            android:hint="Enter Device ID"
+            android:inputType="number" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -94,68 +95,63 @@
             android:hint="Enter Device password" />
 
 
-
     </LinearLayout>
 
     <Button
-        app:strokeColor="@color/primaryColor"
+        android:id="@+id/button1"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
         android:text="WIFI configuration"
+        android:textColor="@color/primaryColor"
         android:textSize="16sp"
-        android:id="@+id/button1"
-        android:textColor="@color/primaryColor" />
+        app:strokeColor="@color/primaryColor" />
 
     <Button
-        app:strokeColor="@color/primaryColor"
+        android:id="@+id/button"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
         android:text="Real-time preview"
+        android:textColor="@color/primaryColor"
         android:textSize="16sp"
-        android:id="@+id/button"
-        android:textColor="@color/primaryColor" />
-
+        app:strokeColor="@color/primaryColor" />
 
 
     <Button
-        app:strokeColor="@color/primaryColor"
+        android:id="@+id/button2"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
         android:text="Video playback"
+        android:textColor="@color/primaryColor"
         android:textSize="16sp"
-        android:id="@+id/button2"
-        android:textColor="@color/primaryColor" />
-
-
+        app:strokeColor="@color/primaryColor" />
 
 
     <ProgressBar
         android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyleLarge"
         android:layout_width="80dip"
         android:layout_height="80dip"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_gravity="center"
         android:visibility="gone" />
-
 
 
 </LinearLayout>

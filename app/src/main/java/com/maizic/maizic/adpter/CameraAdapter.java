@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,14 +17,14 @@ import com.maizic.maizic.roomdatabase.RoomModel;
 
 import java.util.List;
 
-public class CameraAdapter extends RecyclerView.Adapter<CameraAdapter.DealViewHolder> {
+public class CameraAdapter extends RecyclerView.Adapter<CameraAdapter.CameraViewHolder> {
 
     private List<RoomModel> list;
     private onClicked onClick;
 
-    public CameraAdapter( onClicked onClick){
+    public CameraAdapter( onClicked onClick,List<RoomModel> list){
         this.list = list;
-
+        this.onClick=onClick;
     }
 
     public void SetData(List<RoomModel> list) {
@@ -32,16 +33,14 @@ public class CameraAdapter extends RecyclerView.Adapter<CameraAdapter.DealViewHo
 
     @NonNull
     @Override
-    public DealViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CameraViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_camera_layout, parent, false);
-        return new DealViewHolder(view);
+        return new CameraViewHolder(view);
     }
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(@NonNull DealViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CameraViewHolder holder, int position) {
 
         holder.deviceID.setText(list.get(position).getDeviceID());
     }
@@ -53,29 +52,38 @@ public class CameraAdapter extends RecyclerView.Adapter<CameraAdapter.DealViewHo
         return list.size();
     }
 
-    public class DealViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class CameraViewHolder extends RecyclerView.ViewHolder {
 
         public TextView deviceID,deviceName,devicePass;
         public ImageView clickItem;
+        public LinearLayout device_delete;
 
-        public DealViewHolder(@NonNull View itemView) {
+        public CameraViewHolder(@NonNull View itemView) {
             super(itemView);
 
             clickItem = itemView.findViewById(R.id.item_face);
             deviceID=itemView.findViewById(R.id.ItemTitleName);
+            device_delete=itemView.findViewById(R.id.ll_device_delete);
 
-            clickItem.setOnClickListener(this);
+            clickItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick.onItemClicked(getAdapterPosition(),list);
+                }
+            });
+            device_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick.onItemDelete(getAdapterPosition(),list);
+                }
+            });
 
         }
 
-        @Override
-        public void onClick(View v) {
-            onClick.onItemClicked(getAdapterPosition(),list);
-        }
     }
-
 
     public interface onClicked{
         void onItemClicked(int position, List<RoomModel> list);
+        void onItemDelete(int position,List<RoomModel> list);
     }
 }

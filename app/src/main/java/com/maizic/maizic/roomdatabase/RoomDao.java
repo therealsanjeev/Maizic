@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 
+
 /**
  * Created by Sanjeev on 08,June,2021
  * therealsanjeev0@gmail.com
@@ -30,7 +31,6 @@ public interface RoomDao {
     //Delete all Genre from table
     @Query("DELETE FROM cameraData")
     void deleteAllData();
-
 
     @Query("SELECT * FROM cameraData")
     Flowable<List<RoomModel>> allData();

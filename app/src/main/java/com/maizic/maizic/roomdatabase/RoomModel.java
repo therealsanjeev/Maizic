@@ -13,43 +13,45 @@ import java.util.List;
  */
 @Entity(tableName = "cameraData")
 public class RoomModel {
-    private int deviceID;
-    private int deviceName;
-    private int devicePass;
-    public RoomModel(){
-
-    }
-    public RoomModel(int deviceID, int deviceName, int devicePass) {
-        this.deviceID = deviceID;
-        this.deviceName = deviceName;
-        this.devicePass = devicePass;
-    }
-
-
-    public int getDeviceID() {
+    @PrimaryKey
+    @NonNull
+    private String deviceID;
+    private String deviceName;
+    private String devicePass;
+    public String getDeviceID() {
         return deviceID;
     }
 
-    public void setDeviceID(int deviceID) {
+    public void setDeviceID(String deviceID) {
         this.deviceID = deviceID;
     }
 
-    public int getDeviceName() {
+    public String getDeviceName() {
         return deviceName;
     }
 
-    public void setDeviceName(int deviceName) {
+    public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
-    public int getDevicePass() {
+    public String getDevicePass() {
         return devicePass;
     }
 
-    public void setDevicePass(int devicePass) {
+    public void setDevicePass(String devicePass) {
         this.devicePass = devicePass;
     }
 
+    public RoomModel(String deviceID, String deviceName, String devicePass) {
+        this.deviceID = deviceID;
+        this.deviceName = deviceName;
+        this.devicePass = devicePass;
+    }
+
+
+    public RoomModel(){
+
+    }
 
 
 }

@@ -70,12 +70,10 @@ dependencies {
 
     def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation "androidx.room:room-rxjava2:2.3.0"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    def rx_version = "3.0.0"
-    // optional - RxJava support for Room
     //Room Database
-    implementation "io.reactivex.rxjava3:rxandroid:$rx_version"
-    implementation "io.reactivex.rxjava3:rxjava:$rx_version"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.9"
 }

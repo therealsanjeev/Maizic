@@ -1,7 +1,5 @@
 package com.maizic.maizic.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
@@ -10,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -18,21 +17,30 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.macrovideo.sdk.defines.Defines;
 import com.macrovideo.sdk.defines.ResultCode;
-import com.macrovideo.sdk.media.ILoginDeviceCallback;
 import com.macrovideo.sdk.media.LoginHandle;
 import com.macrovideo.sdk.media.LoginHelper;
 import com.macrovideo.sdk.objects.DeviceInfo;
 import com.macrovideo.sdk.objects.LoginParam;
-
 import com.maizic.maizic.LocalDefines;
 import com.maizic.maizic.NVPlayerPlayActivity;
 import com.maizic.maizic.NVPlayerPlayFishEyeActivity;
 import com.maizic.maizic.R;
 import com.maizic.maizic.RecordActivity;
 import com.maizic.maizic.SmartLinkQuickWifiConfigActivity;
+import com.maizic.maizic.roomdatabase.LocalDataBase;
+import com.maizic.maizic.roomdatabase.RoomDao;
+import com.maizic.maizic.roomdatabase.RoomModel;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class CameraSetupActivity extends AppCompatActivity {
 
@@ -55,23 +63,36 @@ public class CameraSetupActivity extends AppCompatActivity {
 
     public static DeviceInfo deviceInfo = null;
     private LoginHandle deviceParam = null;
+
+    RoomDao roomDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        LocalDataBase localDataBase = LocalDataBase.getInstance(this);
+        roomDao = localDataBase.roomDao();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(LocalDefines.notificationID);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_camera_setup);
 
+
+        findViewById(R.id.btnBackToHome).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+//        RoomModel model= new RoomModel("343535","65642424","");
+//        saveCameraData(model);
         etDeviceID = findViewById(R.id.et_device_id);
         etDeviceUser = findViewById(R.id.et_device_username);
         etDevicePwd = findViewById(R.id.et_device_password);
-        progress =  findViewById(R.id.progressbar);
+        progress = findViewById(R.id.progressbar);
 
-        btn =  findViewById(R.id.button1);
+        btn = findViewById(R.id.button1);
         btn.setOnClickListener(v -> {
 
             Intent intent = new Intent(CameraSetupActivity.this, SmartLinkQuickWifiConfigActivity.class);
@@ -79,7 +100,7 @@ public class CameraSetupActivity extends AppCompatActivity {
 
         });
 
-        btn2 =  findViewById(R.id.button);
+        btn2 = findViewById(R.id.button);
         btn2.setOnClickListener(v -> {
 
             String deviceID = etDeviceID.getText().toString().trim();
@@ -109,10 +130,14 @@ public class CameraSetupActivity extends AppCompatActivity {
             progress.setVisibility(View.VISIBLE);
             btn.setClickable(false);
             btn2.setClickable(false);
+
+            //testing...
+//            RoomModel model= new RoomModel(deviceID,deviceUser,devicePwd);
+//            saveCameraData(model);
             loginDevice();
         });
 
-        btn3 =  findViewById(R.id.button2);
+        btn3 = findViewById(R.id.button2);
         btn3.setOnClickListener(v -> {
 
             String deviceID = etDeviceID.getText().toString().trim();
@@ -194,31 +219,28 @@ public class CameraSetupActivity extends AppCompatActivity {
         LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_PLAY);
 
 
-        int loginResult = LoginHelper.loginDevice(this,loginParam, new ILoginDeviceCallback() {
-            @Override
-            public void onLogin(LoginHandle loginHandle) {
-                if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS) {
-                    // login successful
-                    Message msg = handler.obtainMessage();
-                    msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
-                    msg.arg2 = ResultCode.RESULT_CODE_SUCCESS;
-                    Bundle data = new Bundle();
-                    data.putParcelable("device_param", loginHandle);
-                    msg.setData(data);
-                    handler.sendMessage(msg);
-                } else if (loginHandle != null) {
-                    // Login failed, you can view the specific error code
-                    Message msg = handler.obtainMessage();
-                    msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
-                    msg.arg2 = loginHandle.getnResult();
-                    handler.sendMessage(msg);
-                } else {
-                    // Login failed
-                    Message msg = handler.obtainMessage();
-                    msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
-                    msg.arg2 = ResultCode.RESULT_CODE_FAIL_SERVER_CONNECT_FAIL;
-                    handler.sendMessage(msg);
-                }
+        int loginResult = LoginHelper.loginDevice(this, loginParam, loginHandle -> {
+            if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS) {
+                // login successful
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = ResultCode.RESULT_CODE_SUCCESS;
+                Bundle data = new Bundle();
+                data.putParcelable("device_param", loginHandle);
+                msg.setData(data);
+                handler.sendMessage(msg);
+            } else if (loginHandle != null) {
+                // Login failed, you can view the specific error code
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = loginHandle.getnResult();
+                handler.sendMessage(msg);
+            } else {
+                // Login failed
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = ResultCode.RESULT_CODE_FAIL_SERVER_CONNECT_FAIL;
+                handler.sendMessage(msg);
             }
         });
 
@@ -231,6 +253,7 @@ public class CameraSetupActivity extends AppCompatActivity {
         }
     }
 
+    //no use class
     class DeviceLoginThread extends Thread {
         DeviceInfo info = null;
         int nLoginID1 = 0;
@@ -303,6 +326,12 @@ public class CameraSetupActivity extends AppCompatActivity {
                             //MainActivity.this.finish();
                         } else {
 
+                            String deviceID = etDeviceID.getText().toString().trim();
+                            String deviceUser = etDeviceUser.getText().toString().trim();
+                            String devicePwd = etDevicePwd.getText().toString().trim();
+                            RoomModel model= new RoomModel(deviceID,deviceUser,devicePwd);
+
+                            saveCameraData(model);
                             Intent intent = new Intent(CameraSetupActivity.this, NVPlayerPlayActivity.class);
                             intent.putExtras(bundle);
                             startActivity(intent);
@@ -352,6 +381,32 @@ public class CameraSetupActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void saveCameraData(final RoomModel roomModel) {
+
+
+        Completable.fromAction(() ->
+                roomDao.insert(roomModel)).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                        Log.d("TAG", "onSubscribe: Called");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("TAG", "onComplete: Called");
+//                        isLoading.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("TAG", "onError: Called" + e.getMessage());
+                    }
+                });
+    }
 
 
     private void ShowAlert(String title, String msg) {
