@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/server_bg"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:background="@drawable/background_title"
+        android:gravity="top|bottom|left|right|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <ImageView
+            android:contentDescription="@string/desc"
+            android:id="@+id/btnAPDeviceBack"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:src="@drawable/back_btn" />
+
+        <TextView
+            android:id="@+id/tvConfig"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:layout_weight="2.0"
+            android:layout_width="0dp"
+            android:text="@string/deviceHotspot"
+            android:textColor="@color/font_color_white"
+            android:textSize="16sp"/>
+
+        <Button
+            android:background="@drawable/netword_save_btn"
+            android:gravity="top|bottom|left|right|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:text="@string/btn_save"
+            android:textColor="@color/font_color_white"
+            android:textSize="15sp"
+            android:visibility="invisible" />
+    </LinearLayout>
+    <LinearLayout
+        android:background="@drawable/server_bg"
+        android:id="@+id/layoutDeviceSelectView"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <ListView
+            android:id="@+id/lvAPDeviceView1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1.0"
+            android:layout_width="match_parent"
+            android:visibility="visible" />
+
+        <Button
+            android:background="@drawable/delete_save_btn"
+            android:gravity="top|bottom|left|right|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/btnAPDeviceRefresh1"
+            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:text="@string/btn_refresh"
+            android:textColor="@color/font_color_white"
+            android:textSize="16sp" />
+    </LinearLayout></LinearLayout>

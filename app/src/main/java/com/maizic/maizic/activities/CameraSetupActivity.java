@@ -30,7 +30,6 @@ import com.maizic.maizic.NVPlayerPlayActivity;
 import com.maizic.maizic.NVPlayerPlayFishEyeActivity;
 import com.maizic.maizic.R;
 import com.maizic.maizic.RecordActivity;
-import com.maizic.maizic.SmartLinkQuickWifiConfigActivity;
 import com.maizic.maizic.roomdatabase.LocalDataBase;
 import com.maizic.maizic.roomdatabase.RoomDao;
 import com.maizic.maizic.roomdatabase.RoomModel;
@@ -79,12 +78,7 @@ public class CameraSetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera_setup);
 
 
-        findViewById(R.id.btnBackToHome).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        findViewById(R.id.btnBackToHome).setOnClickListener(v -> onBackPressed());
 //        RoomModel model= new RoomModel("343535","65642424","");
 //        saveCameraData(model);
         etDeviceID = findViewById(R.id.et_device_id);
@@ -95,7 +89,7 @@ public class CameraSetupActivity extends AppCompatActivity {
         btn = findViewById(R.id.button1);
         btn.setOnClickListener(v -> {
 
-            Intent intent = new Intent(CameraSetupActivity.this, SmartLinkQuickWifiConfigActivity.class);
+            Intent intent = new Intent(CameraSetupActivity.this, AddWiFiToCameraActivity.class);
             startActivity(intent);
 
         });

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_add_wifi_to_camera.xml" value="0.18981481481481483" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_add_wifito_camera.xml" value="0.21203703703703702" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_ap_connect.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_ap_connect_popupwindow.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_camera_setup.xml" value="0.1962962962962963" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/activity_main.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/connect_wifi.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/fragment_maizic.xml" value="0.1125" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/layout/single_camera_layout.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/there/Desktop/Maizic/app/src/main/res/menu/menu.xml" value="0.23229166666666667" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

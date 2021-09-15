@@ -20,7 +20,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -30,6 +32,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -53,10 +56,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.macrovideo.sdk.media.LoginHandle;
 import com.macrovideo.sdk.objects.DeviceInfo;
+import com.macrovideo.sdk.setting.DeviceNetworkSetting;
 import com.macrovideo.sdk.tools.DeviceScanner;
 import com.macrovideo.sdk.tools.Functions;
 import com.maizic.maizic.activities.CameraSetupActivity;
+import com.maizic.maizic.activities.DeviceAPConnectActivity;
 import com.maizic.maizic.animate.RadarView;
 
 import org.json.JSONException;
@@ -69,26 +75,27 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 用于声波配置
+ * For sonic configuration
  *
  * @author Administrator
  */
+
 public class SmartLinkQuickWifiConfigActivity extends Activity implements
         OnClickListener, OnItemClickListener {
 
     // //WIFI
     private WiFiAdnim mWiFiAdnim;
-    private WifiManager mWiFiManager; // 定义一个WifiManager
-    private WifiReceiver mwReceiver; // 定义一个WifiReceiver
-    private android.net.wifi.WifiInfo mWifiInfo; // 定义一个wifiInfo
+    private WifiManager mWiFiManager; // Define a WifiManager
+    private WifiReceiver mwReceiver; // Define a WifiReceiver
+    private WifiInfo mWifiInfo; // Define a wifiInfo
     private List<ScanResult> locaWifiDeiviceList = new ArrayList<ScanResult>();
 
-    private LinearLayout lLayoutWifiInputPage; // 显示或隐藏准备配置，开始配置
-    private ImageView btnSLBack, ivSLPwdVisible; // 返回按钮，开始声波配置按钮，现实隐藏wifi密码按钮
+    private LinearLayout lLayoutWifiInputPage; // Show or hide ready configuration, start configuration
+    private ImageView btnSLBack, ivSLPwdVisible; // Back button, start sonic configuration button, reality hide wifi password button
     private Button btnSLSearchBack = null;
-    private Button btnSLStartConfig; // 下一步;
-    private Button btnWifiQuikConfig;// AP配置
-    private EditText etSLWifiSSID, etSLWifiPassword; // wifi名称，wifi密码
+    private Button btnSLStartConfig; // Next step;
+    private Button btnWifiQuikConfig;// AP configuration
+    private EditText etSLWifiSSID, etSLWifiPassword; // wifi name, wifi password
 
     private View soundWaveConfigConctentView = null;// ,
     // soundWaveConfigDemoState
@@ -97,18 +104,18 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     private Dialog soundWaveConfigDialog = null;// ,
     // soundWaveConfigDemoStateDialog
     // = null; //
-    // 用于现实ListView的DiaLog
-    private ImageView ivSoundWaveConfigWifiListViewBack; // wifi列表返回按钮
-    private ListView lvSoundWaveConfigWifi; // 声波配置的wifi列表
+    // DiaLog for Realistic ListView
+    private ImageView ivSoundWaveConfigWifiListViewBack; // wifi list back button
+    private ListView lvSoundWaveConfigWifi; // Sonic configuration wifi list
 
-    private ProgressDialog progressDialog; // 用于确定wifi列表是否出现
-    private boolean bWifiPassword = true; // 用于判断是否隐藏密码
+    private ProgressDialog progressDialog; // Used to determine whether the wifi list appears
+    private boolean bWifiPassword = true; // Used to determine whether to hide the password
 
-    private LinearLayout llayoutSLSearchingPage; // 显示或隐藏准备配置，开始配置
-    private FrameLayout flayoutSLSearchingAnimate; // 显示搜索界面
+    private LinearLayout llayoutSLSearchingPage; // Show or hide ready configuration, start configuration
+    private FrameLayout flayoutSLSearchingAnimate; // Show search interface
     private RadarView searchAminatView;
-    private String strConnSSID; // 当前手机连接的wifi用户名
-    private MediaPlayer soundPlayer = null;// 声音播放
+    private String strConnSSID; // The wifi user name of the current mobile phone connection
+    private MediaPlayer soundPlayer = null;// Sound playback
     private MediaPlayer soundPlayerHint = null; //
 
     private static final int WIFI_CONNECT = 0x11;
@@ -142,6 +149,10 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
     private LinearLayout llWifiQuikConfig;
 
+
+    private DeviceNetworkSetting deviceNetworkSetting;
+    private DeviceInfo deviceInfo;
+    private String TAG="netWork Check";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -151,6 +162,14 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);// Hide title 
         setContentView(R.layout.activity_smartlink_wifi_config);
+
+        deviceNetworkSetting= new DeviceNetworkSetting();
+        deviceInfo=LocalDefines.getDeviceInfoFromSP(this);
+
+        LoginHandle loginHandle= LocalDefines.Device_LoginHandle;
+//        NetworkConfigInfo networkConfigInfo=deviceNetworkSetting.getNetworkConfig(deviceInfo, loginHandle);
+//        List<WifiInfo> wifiInfoList = DeviceNetworkSetting. getVisibleWifiListFormDevice(loginHandle, deviceInfo, true );
+        Log.d(TAG, "onCreate: "+" !!!" +loginHandle);
         initView(); // Initialize interface controls
 
     }
@@ -194,7 +213,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     @Override
     protected void onDestroy() {
 
-        soundPlayer = null;// 声音播放
+        soundPlayer = null;// Sound playback
         soundPlayerHint = null; //
 
         locaWifiDeiviceList = null;
@@ -210,7 +229,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 初始化控件
+     * Initialize the control
      */
     @SuppressWarnings("deprecation")
     private void initView() {
@@ -232,34 +251,38 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         // lin
         // 20160123
         boolean isZh = LocalDefines.isZh(this);
-        llWifiQuikConfig.setVisibility(isZh ? View.VISIBLE : View.GONE);
+//        llWifiQuikConfig.setVisibility(isZh ? View.VISIBLE : View.GONE);
         btnWifiQuikConfig.setOnClickListener(this);
 
         etSLWifiSSID = (EditText) findViewById(R.id.etSLWifiSSID);
-        etSLWifiSSID.setInputType(InputType.TYPE_NULL);
-        etSLWifiSSID.addTextChangedListener(new TextWatcher() {
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO Auto-generated method stub
+//        etSLWifiSSID.setInputType(InputType.TYPE_NULL);
 
-            }
+//        etSLWifiSSID.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (s.length() == 0) {
+//                    etSLWifiSSID.setEnabled(false);
+//                } else {
+//                    etSLWifiSSID.setEnabled(true);
+//                }
+//            }
+//        });
+//        etSLWifiSSID.setEnabled(true);
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 0) {
-                    etSLWifiSSID.setEnabled(false);
-                } else {
-                    etSLWifiSSID.setEnabled(true);
-                }
-            }
-        });
         etSLWifiPassword = (EditText) findViewById(R.id.etSLWifiPassword);
 
         lLayoutWifiInputPage.setVisibility(View.VISIBLE);
@@ -268,13 +291,13 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
         llayoutSLSearchingPage = (LinearLayout) findViewById(R.id.llayoutSLSearchingPage);
         flayoutSLSearchingAnimate = (FrameLayout) findViewById(R.id.flayoutSLSearchingAnimate);
-        flayoutSLSearchingAnimate.setBackgroundColor(Color
-                .parseColor("#f9f9f9"));
+
+        flayoutSLSearchingAnimate.setBackgroundColor(Color.parseColor("#f9f9f9"));
         llayoutSLSearchingPage.setVisibility(View.GONE);
 
         btnSLSearchBack = (Button) findViewById(R.id.btnSLSearchBack);
         btnSLSearchBack.setOnClickListener(this);
-        // gif图
+        // gif
         searchAminatView = (RadarView) findViewById(R.id.searchAminatView);
         searchAminatView.setWillNotDraw(false); //
         tvTimeLeft = (TextView) findViewById(R.id.tvTimeLeft);
@@ -307,11 +330,11 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     private void initWifi() {
         mWiFiAdnim = new WiFiAdnim(this);
         mWiFiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if(mWiFiManager.getConnectionInfo()!=null)
         mWifiInfo = mWiFiManager.getConnectionInfo();
 
         // If the phone is connected to wifi then
-        if (mWiFiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED
-                && mWifiInfo != null) { // If wifi is on
+        if (mWiFiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED && mWifiInfo != null) { // If wifi is on
             strConnSSID = mWifiInfo.getSSID();
             // System.out.println("GetSSID= "+strConnSSID+", "+strConnSSID.equalsIgnoreCase("0x"));//
 
@@ -342,7 +365,8 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                 }
             }
 
-        } else { // wifi没有开启
+        }
+        else { // wifi is not turned on
             if (!bIsNoticeShow) {
 
                 View view = View
@@ -386,20 +410,20 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
             }
 
         }
-        // /注册wifi广播接收器
+        // /Register wifi broadcast receiver
         mwReceiver = new WifiReceiver();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION); // 网络状态改变
-        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION); // wifi 状态改变
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION); // Network status change
+        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION); // wifi State change
         registerReceiver(mwReceiver, intentFilter);
         // //
-        mWiFiAdnim.startScan(); // 开始扫描网络
+        mWiFiAdnim.startScan(); // Start scanning the network
 
     }
 
-    // 判断wifi是否是打开的
+    // Determine if wifi is open
     public boolean isWiFiActive() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
@@ -417,7 +441,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * wifi选择窗口
+     * wifi selection window
      */
     private void wifiChooseWindow() {
         soundWaveConfigConctentView = LayoutInflater.from(getApplication())
@@ -447,7 +471,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         ivSoundWaveConfigWifiListViewBack.setOnClickListener(this);
         lvSoundWaveConfigWifi.setOnItemClickListener(this);
 
-        // listView数据加载并显示
+        // listView data is loaded and displayed
         if (locaWifiDeiviceList != null && locaWifiDeiviceList.size() > 0) {
             DeviceSoundWaveConfigAdapter deviceSoundWaveConfigAdapter = new DeviceSoundWaveConfigAdapter(
                     SmartLinkQuickWifiConfigActivity.this, locaWifiDeiviceList,
@@ -473,7 +497,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         boolean bisLanguage = false;
 
         String locale = Locale.getDefault().getLanguage();
-        if (locale.equals("zh")) // 如果是zhongwen
+        if (locale.equals("zh")) // If it's Chinese
         {
             bisLanguage = true;
         }
@@ -599,7 +623,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     public void onClick(View arg0) {
 
         switch (arg0.getId()) {
-            case R.id.btnSLSearchBack: // 点击返回按钮
+            case R.id.btnSLSearchBack: // Click the back button
                 searchAminatView.stopAnimate();
                 try {
                     if (isLanguage() && soundPlayerHint != null) {
@@ -620,7 +644,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                 nTimeoutDetectID++;
 
                 break;
-            case R.id.btnSLBack: // 点击返回按钮
+            case R.id.btnSLBack: // Click the back button
 
                 bIsConfiging = false;
                 DeviceScanner.stopSmartConnection();
@@ -644,9 +668,9 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
                 break;
 
-            case R.id.btnSLStartConfig: // 点击下一步按钮
+            case R.id.btnSLStartConfig: // Reload the sound and click the next button
 
-                // 重新加载声音
+                // Reload sound
 
                 if (isLanguage()) {
                     if (soundPlayerHint != null) {
@@ -664,14 +688,16 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                 nConfigID = LocalDefines.getConfigID();
                 bIsConfiging = true;
 
-                // 获得当前已连接的SSID的字符串
+                // Get the string of the currently connected SSID
                 String currentConnectedSSIDName = LocalDefines.getCurrentConnectedWifiSSIDName(mWiFiManager);
                 if (!(currentConnectedSSIDName.equals(strSSID)) && strSSID != null
                         && strSSID.length() > 0) {
                     connectToSpecifiedWifi(strSSID, strPassword, mWifiEnrcrypt);
                 }
+//                connectToSpecifiedWifi(strSSID, strPassword, mWifiEnrcrypt);
+
                 //
-                DeviceScanner.startSmartConnection(nConfigID, strSSID, strPassword); // 开始发送smarkLink
+                DeviceScanner.startSmartConnection(nConfigID, strSSID, strPassword); // Start sending smarkLink
 
                 searchAminatView.startAnimate();
                 showSearchingPage();
@@ -753,29 +779,30 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                 break;
 
             case R.id.btnWifiQuikConfig:// add by lin 20160123 AP配置
-//                if (bIsSearching) {
-//                    StopSearchDevice(); // 停止刷新
-//                }
-//
-//                if (Build.VERSION.SDK_INT >= 23) {
-//                    initGPS();
-//                } else {
-//                    Intent intentSeekFine = new Intent(this, DeviceQuickConfigActivity.class);
-//                    this.startActivity(intentSeekFine);
-//                    this.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
-//                    this.finish();
-//                }
+                if (bIsSearching) {
+                    StopSearchDevice(); // 停止刷新
+                }
+
+                if (Build.VERSION.SDK_INT >= 23) {
+                    initGPS();
+                } else {
+
+                    Intent intentSeekFine = new Intent(this, DeviceAPConnectActivity.class);
+                    this.startActivity(intentSeekFine);
+                    this.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+                    this.finish();
+                }
                 break;
 
             default:
                 break;
         }
-
     }
 
+
+
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // TODO Auto-generated method stub
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
@@ -823,7 +850,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * listView点击事件
+     * listView click event
      *
      * @param arg0
      * @param arg1
@@ -833,7 +860,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-        // wifi列表点击事件
+        // wifi list click event
 
         lvSoundWaveConfigWifi.setSelection(arg2);
 
@@ -856,11 +883,11 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 创建一个内部类 进行广播扫描出来的热点信息
+     * Create an internal class to broadcast the hot information scanned out
      *
      * @author Administrator
      */
-    public class WifiReceiver extends BroadcastReceiver {
+    private class WifiReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {
 
             if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
@@ -868,6 +895,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (info.getState().equals(NetworkInfo.State.DISCONNECTED)) {
                     etSLWifiSSID.setText("");
+                    Log.d("TAG", "onReceive: wifi disconnected");
                 } else if (info.getState().equals(NetworkInfo.State.CONNECTED)) {
 
                     mWifiInfo = mWiFiManager.getConnectionInfo();
@@ -1112,10 +1140,12 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                         break;
                 }
 
-            } else if (msg.arg1 == LocalDefines.BIND_DEVICE_RESULT_CODE) {
+            }
+            else if (msg.arg1 == LocalDefines.BIND_DEVICE_RESULT_CODE) {
                 String searchResultMsg = getString(R.string.add_device);
                 Bundle bundle = msg.getData();
                 DeviceInfo info2 = (DeviceInfo) bundle
+
                         .getParcelable("Bind_info");
                 int index = bundle.getInt("Bind_index");
                 if (msg.arg2 == 0) {
@@ -1222,7 +1252,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     DatagramSocket ipuStationudpSocket = null;
     DatagramSocket ipuAPudpSocket = null;
 
-    // 开始设备搜索
+    // Start device search
     public boolean StartSearchDevice() {
 
         try {
@@ -1245,7 +1275,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
 
     }
 
-    // 停止设备搜索
+    // Stop device search
     public void StopSearchDevice() {
 
         bIsSearching = false;
@@ -1259,7 +1289,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         new BroadCastUdp(m_nSearchID).start();
     }
 
-    // 设备搜索线程
+    // Device search thread
     public class BroadCastUdp extends Thread {
 
         private int nTreadSearchID = 0;
@@ -1292,7 +1322,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     // //end add by mai 2015-4-10
 
     /**
-     * 判断是否打开GPS位置信息 add 2016年5月26日
+     * Determine whether to open GPS location information add May 26, 2016
      */
     private void initGPS() {
         LocationManager locationManager = (LocationManager) this
@@ -1316,30 +1346,25 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
                     .setPositiveButton(
                             getResources().getString(
                                     R.string.str_permission_setting2),
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    // 转到手机设置界面，用户设置GPS
-                                    Intent intent = new Intent(
-                                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    // startActivityForResult(intent, 0); //
-                                    // 设置完成后返回到原来的界面
-                                    startActivity(intent);
-                                }
+                            (dialog, which) -> {
+                                // 转到手机设置界面，用户设置GPS
+                                Intent intent = new Intent(
+                                        Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                // startActivityForResult(intent, 0); //
+                                // 设置完成后返回到原来的界面
+                                startActivity(intent);
                             }).show();
         } else {
-//            Intent intentSeekFine = new Intent(this, DeviceQuickConfigActivity.class);
-//            this.startActivity(intentSeekFine);
-//            this.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
-//            this.finish();
+            Intent intentSeekFine = new Intent(this, DeviceAPConnectActivity.class);
+            this.startActivity(intentSeekFine);
+            this.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+            this.finish();
             ;
         }
     }
 
     /**
-     * // 连接指定wifi add  2016年6月21日
+     * // Connect to designated wifi add June 21, 2016
      *
      * @param ssid
      * @param psw
@@ -1350,7 +1375,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
     /**
-     * 判断加密方式 add 2016年6月21日
+     * Determine the encryption method add June 21, 2016
      *
      * @param capabilities
      * @return
@@ -1441,8 +1466,7 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
         }
     }
 
-    public void postBindDeviceData(int DeviceId, String DeviceName,
-                                   String DevicePassword, DeviceInfo info, int infoIndex)
+    public void postBindDeviceData(int DeviceId, String DeviceName, String DevicePassword, DeviceInfo info, int infoIndex)
             throws JSONException {
 //        long time = System.currentTimeMillis();
 //
@@ -1534,3 +1558,13 @@ public class SmartLinkQuickWifiConfigActivity extends Activity implements
     }
 
 }
+
+
+
+
+
+
+
+
+
+

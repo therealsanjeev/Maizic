@@ -76,4 +76,9 @@ dependencies {
     //Room Database
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
     implementation "io.reactivex.rxjava2:rxjava:2.2.9"
+
+    //wifi list
+    implementation 'com.thanosfisherman.wifiutils:wifiutils:1.6.5'
+
+
 }

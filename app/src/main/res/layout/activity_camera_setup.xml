@@ -18,8 +18,8 @@
 
         <ImageView
             android:id="@+id/btnBackToHome"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_round_arrow_back_ios_24" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:fontFamily="@font/roboto_medium"
             android:text="Setup your Camera  "
             android:textColor="@color/black"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <LinearLayout
@@ -107,7 +107,9 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
-        android:text="WIFI configuration"
+        android:text="WIFI Configuration"
+        android:drawableTint="@color/primaryColor"
+        android:drawableRight="@drawable/ic_baseline_signal_wifi_4_bar_24"
         android:textColor="@color/primaryColor"
         android:textSize="16sp"
         app:strokeColor="@color/primaryColor" />
