@@ -241,22 +241,19 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
     }
 
     private void addingWifiToCamera(String wifiSSID,String wifiPassword) {
-        DeviceInfo deviceInfo=DeviceScanner.getDeviceListFromLan().get(0);
+//        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
+//        LoginHandle loginHandle = new LoginHandle();
 
+        DeviceInfo deviceInfo=DeviceScanner.getDeviceListFromLan().get(0);
         Log.d("TAG", "addingWifiToCamera: "+deviceInfo);
         LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
-
-        LoginHandle loginHandle = new LoginHandle();
-
+        LoginHandle loginHandle = LoginHelper.loginDevice(loginParam);
 
         if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS)
         Log.d("TAG", "addingWifiToCamera: "+loginHandle.getStrIP());
-//        deviceInfo.getStrUsername();
-//        Log.d("TAG", "addingWifiToCamera: "+deviceInfo.getStrUsername()+deviceInfo.getStrIP());
-
         NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig( new LoginHandle(), deviceInfo, 1002,
                 wifiSSID, wifiPassword);
-//
+
         Log.d("TAG", "addingWifiToCamera: "+networkInfo+"   code:"+networkInfo.getnResult());
         if (networkInfo != null && networkInfo.getnResult() == ResultCode.RESULT_CODE_SUCCESS){
             Toast.makeText(AddWiFiToCameraActivity.this,"Connected Wifi",Toast.LENGTH_LONG).show();
@@ -265,54 +262,4 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
         }
     }
 
-    private Handler handler = new Handler() {
-        @SuppressLint("HandlerLeak")
-        public void handleMessage(Message msg) {
-
-            // 搜索设备成功
-            if (msg.arg1 == LocalDefines.DEVICE_SEARCH_RESULT) {
-
-                DeviceScanner.stopSmartConnection();
-                DeviceInfo info = null;
-                switch (msg.arg2) {
-                    case LocalDefines.DEVICE_SEARCH_RESULT_OK:
-
-                        if (deviceList != null && deviceList1.size() > 0) {
-
-
-
-                            Toast toast = Toast.makeText(AddWiFiToCameraActivity.this,
-                                    "Configuration complete", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-
-                            AddWiFiToCameraActivity.deviceInfo = deviceList1.get(0);
-
-                            finish();
-
-                        } else {
-                            Toast toast = Toast.makeText(
-                                    AddWiFiToCameraActivity.this,
-                                    getString(R.string.no_dev_found),
-                                    Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                        }
-
-                        break;
-                    case LocalDefines.DEVICE_SEARCH_RESULT_FAIL:
-
-                        Toast toast = Toast.makeText(
-                                AddWiFiToCameraActivity.this,
-                                getString(R.string.no_dev_found),
-                                Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
-                        break;
-                }
-
-            }
-        }
-
-    };
 }
