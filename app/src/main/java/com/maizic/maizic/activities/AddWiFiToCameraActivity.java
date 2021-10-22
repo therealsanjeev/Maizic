@@ -1,19 +1,16 @@
 package com.maizic.maizic.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.admin.DeviceAdminInfo;
 import android.content.Context;
-
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,28 +21,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.macrovideo.sdk.defines.Defines;
 import com.macrovideo.sdk.defines.ResultCode;
+import com.macrovideo.sdk.media.ILoginDeviceCallback;
 import com.macrovideo.sdk.media.LoginHandle;
-import com.macrovideo.sdk.media.LoginHelper;
 import com.macrovideo.sdk.objects.DeviceInfo;
-import com.macrovideo.sdk.objects.LoginParam;
 import com.macrovideo.sdk.setting.DeviceNetworkSetting;
 import com.macrovideo.sdk.setting.NetworkConfigInfo;
 import com.macrovideo.sdk.tools.DeviceScanner;
-import com.maizic.maizic.LocalDefines;
 import com.maizic.maizic.R;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiScan.ScanResultsListener;
@@ -53,7 +40,7 @@ import com.thanosfisherman.wifiutils.wifiScan.ScanResultsListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddWiFiToCameraActivity extends AppCompatActivity {
+public class AddWiFiToCameraActivity extends AppCompatActivity implements ILoginDeviceCallback {
 
     private ListView wifiDeviceList;
 //    private WifiManager wifiManager;
@@ -245,13 +232,14 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
 //        LoginHandle loginHandle = new LoginHandle();
 
         DeviceInfo deviceInfo=DeviceScanner.getDeviceListFromLan().get(0);
-        Log.d("TAG", "addingWifiToCamera: "+deviceInfo);
-        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
-        LoginHandle loginHandle = LoginHelper.loginDevice(loginParam);
 
-        if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS)
-        Log.d("TAG", "addingWifiToCamera: "+loginHandle.getStrIP());
-        NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig( new LoginHandle(), deviceInfo, 1002,
+        Log.d("TAG", "addingWifiToCamera: "+deviceInfo);
+//        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
+//        LoginHandle loginHandle = LoginHelper.loginDevice(loginParam);
+
+//        if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS)
+//        Log.d("TAG", "addingWifiToCamera: "+loginHandle.getStrIP());
+        NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig( null, deviceInfo, 1002,
                 wifiSSID, wifiPassword);
 
         Log.d("TAG", "addingWifiToCamera: "+networkInfo+"   code:"+networkInfo.getnResult());
@@ -262,4 +250,8 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
         }
     }
 
+    @Override
+    public void onLogin(LoginHandle loginHandle) {
+
+    }
 }
