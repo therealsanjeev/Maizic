@@ -1,8 +1,11 @@
 package com.maizic.maizic.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.ScanResult;
@@ -10,6 +13,8 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,13 +31,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.macrovideo.sdk.defines.Defines;
 import com.macrovideo.sdk.defines.ResultCode;
 import com.macrovideo.sdk.media.ILoginDeviceCallback;
 import com.macrovideo.sdk.media.LoginHandle;
+import com.macrovideo.sdk.media.LoginHelper;
 import com.macrovideo.sdk.objects.DeviceInfo;
+import com.macrovideo.sdk.objects.LoginParam;
 import com.macrovideo.sdk.setting.DeviceNetworkSetting;
 import com.macrovideo.sdk.setting.NetworkConfigInfo;
 import com.macrovideo.sdk.tools.DeviceScanner;
+import com.maizic.maizic.LocalDefines;
+import com.maizic.maizic.NVPlayerPlayFishEyeActivity;
 import com.maizic.maizic.R;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiScan.ScanResultsListener;
@@ -41,14 +51,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddWiFiToCameraActivity extends AppCompatActivity implements ILoginDeviceCallback {
-
+    static final int HANDLE_MSG_CODE_LOGIN_RESULT = 0x10;
     private ListView wifiDeviceList;
 //    private WifiManager wifiManager;
 
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
 
-//    WifiReceiverBroadCast receiverWifi;
-private static final int SEEK_DEVICE_OVERTIME = 0x13;
+    //    WifiReceiverBroadCast receiverWifi;
+    private static final int SEEK_DEVICE_OVERTIME = 0x13;
 
     private ConnectivityManager connectivityManager;
     private WifiManager wifiManager;
@@ -58,6 +68,7 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
     ArrayList<String> deviceList;
     private ArrayList<DeviceInfo> deviceList1 = null;
     public static DeviceInfo deviceInfo = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +81,7 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
                     123);
         }
         findViewById(R.id.btnBackToHomeCamera).setOnClickListener(v -> onBackPressed());
-
+        deviceInfo=getIntent().getParcelableExtra("deviceInfo");
     }
 
     @Override
@@ -86,8 +97,6 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
     }
 
     private void init() {
-
-
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         deviceList = new ArrayList<>();
@@ -140,7 +149,7 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
 
         // remember id
 //        Toast.makeText(AddWiFiToCameraActivity.this, networkPass, Toast.LENGTH_SHORT).show();
-        addingWifiToCamera(networkSSID,networkPass);
+        addingWifiToCamera(networkSSID, networkPass);
     }
 
     private void connectToWifi(final String wifiSSID) {
@@ -227,26 +236,48 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
         }).start();
     }
 
-    private void addingWifiToCamera(String wifiSSID,String wifiPassword) {
+    private void addingWifiToCamera(String wifiSSID, String wifiPassword) {
 //        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
-//        LoginHandle loginHandle = new LoginHandle();
+        LoginHandle loginHandle = new LoginHandle();
+//        DeviceInfo deviceInfo11=
+//        ArrayList<DeviceInfo> list = DeviceScanner.getDeviceListFromLan();
+//
+//        deviceInfo = new DeviceInfo(-1, Integer.parseInt(deviceID), deviceID,
+//                "192.168.1.1", 8800, deviceUser, devicePwd, "ABC", deviceID + ".nvdvr.net",
+//                Defines.SERVER_SAVE_TYPE_ADD);
+//        if (!list.isEmpty())
+//            deviceInfo = list.get(0);
 
-        DeviceInfo deviceInfo=DeviceScanner.getDeviceListFromLan().get(0);
+//        LoginParam loginParam = new LoginParam( deviceInfo, Defines.LOGIN_FOR_PLAY);//Real-time preview
 
-        Log.d("TAG", "addingWifiToCamera: "+deviceInfo);
+        int loginResult=login();
+        loginHandle.setnResult(loginResult);
+//
+        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
+        LoginHandle loginHandle = LoginHelper.loginDevice(this,loginParam,);
+//        LoginHandle loginHandle = new LoginHandle(121);
+
+//        loginHandle.setVersion(2);
+//        LoginHandle loginHandle1=LoginHelper.loginDevice(this,loginParam,null);
+
+
+        NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig(loginHandle, deviceInfo, 1002, wifiSSID, wifiPassword);
+
+
+        Log.d("TAG", "addingWifiToCamera: " + deviceInfo);
 //        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_SETTING);
 //        LoginHandle loginHandle = LoginHelper.loginDevice(loginParam);
 
 //        if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS)
 //        Log.d("TAG", "addingWifiToCamera: "+loginHandle.getStrIP());
-        NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig( null, deviceInfo, 1002,
-                wifiSSID, wifiPassword);
+//        NetworkConfigInfo networkInfo = DeviceNetworkSetting.setNetworkConfig( null, deviceInfo, 1002,
+//                wifiSSID, wifiPassword);
 
-        Log.d("TAG", "addingWifiToCamera: "+networkInfo+"   code:"+networkInfo.getnResult());
-        if (networkInfo != null && networkInfo.getnResult() == ResultCode.RESULT_CODE_SUCCESS){
-            Toast.makeText(AddWiFiToCameraActivity.this,"Connected Wifi",Toast.LENGTH_LONG).show();
+        Log.d("TAG", "addingWifiToCamera: " + networkInfo + "   code:" + networkInfo.getnResult());
+        if (networkInfo != null && networkInfo.getnResult() == ResultCode.RESULT_CODE_SUCCESS) {
+            Toast.makeText(AddWiFiToCameraActivity.this, "Connected Wifi", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(AddWiFiToCameraActivity.this,"Try again",Toast.LENGTH_LONG).show();
+            Toast.makeText(AddWiFiToCameraActivity.this, "Try again", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -254,4 +285,148 @@ private static final int SEEK_DEVICE_OVERTIME = 0x13;
     public void onLogin(LoginHandle loginHandle) {
 
     }
+
+    // new SDK
+    private int login() {
+        LoginParam loginParam = new LoginParam(deviceInfo, Defines.LOGIN_FOR_PLAY);
+
+
+        int loginResult = LoginHelper.loginDevice(this, loginParam, loginHandle -> {
+            if (loginHandle != null && loginHandle.getnResult() == ResultCode.RESULT_CODE_SUCCESS) {
+                // login successful
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = ResultCode.RESULT_CODE_SUCCESS;
+                Bundle data = new Bundle();
+                data.putParcelable("device_param", loginHandle);
+                msg.setData(data);
+                handler.sendMessage(msg);
+            } else if (loginHandle != null) {
+                // Login failed, you can view the specific error code
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = loginHandle.getnResult();
+                handler.sendMessage(msg);
+            } else {
+                // Login failed
+                Message msg = handler.obtainMessage();
+                msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+                msg.arg2 = ResultCode.RESULT_CODE_FAIL_SERVER_CONNECT_FAIL;
+                handler.sendMessage(msg);
+            }
+        });
+
+        if (loginResult != 0) {
+            // Login failure, parameter error, etc.
+            Message msg = handler.obtainMessage();
+            msg.arg1 = HANDLE_MSG_CODE_LOGIN_RESULT;
+            msg.arg2 = ResultCode.RESULT_CODE_FAIL_SERVER_CONNECT_FAIL;
+            handler.sendMessage(msg);
+        }
+        return loginResult;
+    }
+    private Handler handler = new Handler() {
+        // @SuppressLint("HandlerLeak")
+        public void handleMessage(Message msg) {
+
+            if (msg.arg1 == HANDLE_MSG_CODE_LOGIN_RESULT) {
+//                progress.setVisibility(View.GONE);
+//                btn.setClickable(true);
+//                btn2.setClickable(true);
+
+                switch (msg.arg2) {
+                    case ResultCode.RESULT_CODE_SUCCESS: {
+
+                        Bundle bundle = msg.getData();
+
+                        LoginHandle loginHandle = bundle.getParcelable("device_param");
+                        LocalDefines.Device_LoginHandle = loginHandle;
+                        int camType = loginHandle.getCamType();
+
+                        if (camType == LocalDefines.CAMTYPE_WALL
+                                || camType == LocalDefines.CAMTYPE_CEIL) {
+                            Intent intent = new Intent(AddWiFiToCameraActivity.this, NVPlayerPlayFishEyeActivity.class);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            //MainActivity.this.finish();
+                        } else {
+
+//                            String deviceID = etDeviceID.getText().toString().trim();
+//                            String deviceUser = etDeviceUser.getText().toString().trim();
+//                            String devicePwd = etDevicePwd.getText().toString().trim();
+//                            RoomModel model= new RoomModel(deviceID,deviceUser,devicePwd);
+//
+//                            saveCameraData(model);
+//                            Intent intent = new Intent(CameraSetupActivity.this, NVPlayerPlayActivity.class);
+//                            intent.putExtras(bundle);
+//                            startActivity(intent);
+                            //MainActivity.this.finish();
+                        }
+                        break;
+                    }
+                    case ResultCode.RESULT_CODE_FAIL_SERVER_CONNECT_FAIL: {
+                        ShowAlert(
+                                getString(R.string.alert_title_login_failed)
+                                        + "  ("
+                                        + getString(R.string.notice_Result_BadResult)
+                                        + ")",
+                                getString(R.string.alert_connect_tips));
+                    }
+                    break;
+                    case ResultCode.RESULT_CODE_FAIL_VERIFY_FAILED: {
+                        ShowAlert(getString(R.string.alert_title_login_failed),
+                                getString(R.string.notice_Result_VerifyFailed));
+                    }
+                    break;
+                    case ResultCode.RESULT_CODE_FAIL_USER_NOEXIST: {
+//                        progress.setVisibility(View.GONE);
+                        ShowAlert(getString(R.string.alert_title_login_failed),
+                                getString(R.string.notice_Result_UserNoExist));
+                    }
+                    break;
+                    case ResultCode.RESULT_CODE_FAIL_PWD_ERROR: {
+                        ShowAlert(getString(R.string.alert_title_login_failed),
+                                getString(R.string.notice_Result_PWDError));
+                    }
+                    break;
+                    case ResultCode.RESULT_CODE_FAIL_OLD_VERSON: {
+                        ShowAlert(getString(R.string.alert_title_login_failed),
+                                getString(R.string.notice_Result_Old_Version));
+                    }
+                    break;
+                    default:
+                        ShowAlert(
+                                getString(R.string.alert_title_login_failed)
+                                        + "  ("
+                                        + getString(R.string.notice_Result_ConnectServerFailed)
+                                        + ")", "");
+                        break;
+
+                }
+            }
+        }
+    };
+
+
+    private void ShowAlert(String title, String msg) {
+        try {
+            new AlertDialog.Builder(this).setTitle(title)
+                    .setMessage(msg)
+                    .setIcon(R.drawable.logo)
+                    .setPositiveButton(getString(R.string.alert_btn_OK),
+                            new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+
+                                    setResult(RESULT_OK);
+                                }
+                            }).show();
+
+        } catch (Exception e) {
+
+        }
+
+    }
+
 }

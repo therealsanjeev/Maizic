@@ -88,8 +88,14 @@ public class CameraSetupActivity extends AppCompatActivity {
 
         btn = findViewById(R.id.button1);
         btn.setOnClickListener(v -> {
-
+            String deviceID = etDeviceID.getText().toString().trim();
+            String deviceUser = etDeviceUser.getText().toString().trim();
+            String devicePwd = etDevicePwd.getText().toString().trim();
+            deviceInfo = new DeviceInfo(-1, Integer.parseInt(deviceID), deviceID,
+                    "192.168.1.1", 8800, deviceUser, devicePwd, "ABC", deviceID + ".nvdvr.net",
+                    Defines.SERVER_SAVE_TYPE_ADD);
             Intent intent = new Intent(CameraSetupActivity.this, AddWiFiToCameraActivity.class);
+            intent.putExtra("deviceInfo",deviceInfo);
             startActivity(intent);
 
         });

@@ -19,7 +19,6 @@ public class RecordActivity extends FragmentActivity {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(LocalDefines.notificationID);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         setContentView(R.layout.activity_record);
 
      PlaybackFragment playbackFragment = new PlaybackFragment();
